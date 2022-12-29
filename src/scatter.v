@@ -21,31 +21,7 @@ pub fn scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
 		x << f32(x_in[i])
 		y << f32(y_in[i])
 	}
-
-	mut x_min := x[0]
-	mut y_min := y[0]
-	mut x_max := x[0]
-	mut y_max := y[0]
-	for xi in x {
-		if xi < x_min {
-			x_min = xi
-		}
-		if xi > x_max {
-			x_max = xi
-		}
-	}
-	for yi in y {
-		if yi < y_min {
-			y_min = yi
-		}
-		if yi > y_max {
-			y_max = yi
-		}
-	}
-
-	po.x_lim = [x_min, x_max]
-	po.y_lim = [y_min, y_max]
-
+	po.update_lims(x, y)
 	mut plot := ScatterPlot{
 		x: x
 		y: y

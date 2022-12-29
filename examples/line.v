@@ -12,9 +12,9 @@ fn main() {
 	}
 
 	mut po := plt.PlotOptions{
-		title: 'Scatter Plot'
+		title: 'Line Plot'
 	}
 	plt.l_info('MAIN START')
-	plt.scatter(x, y, mut po)
+	plt.line(x, y, mut po)
 	plt.l_info('MAIN END')
 }
