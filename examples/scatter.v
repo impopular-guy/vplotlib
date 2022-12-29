@@ -14,6 +14,6 @@ fn main() {
 		title: 'Scatter Plot'
 	}
 	plt.l_info('MAIN START')
-	plt.scatter(x, y, po)
+	plt.scatter(x, y, mut po)
 	plt.l_info('MAIN END')
 }
