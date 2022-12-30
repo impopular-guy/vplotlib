@@ -12,9 +12,12 @@ pub mut:
 	// axes limits
 	x_lim []f32
 	y_lim []f32
-	// padding from window border. Should be a value between 0 and 1
+	// padding for graph from window border. Should be a value between 0 and 1
 	pad_x f32 = 0.1
 	pad_y f32 = 0.1
+	// padding for axis from win border. [0,1]
+	axis_pad_x f32 = 0.08
+	axis_pad_y f32 = 0.08
 	// locally applied params
 	// line configs
 	line_color     gx.Color       = gx.blue

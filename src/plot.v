@@ -41,6 +41,12 @@ pub fn (fig &Figure) show() {
 
 fn frame(fig &Figure) {
 	fig.ctx.begin()
+	x_c := fig.g_po.width * fig.g_po.axis_pad_x
+	y_c := fig.g_po.height * fig.g_po.axis_pad_y
+	w := fig.g_po.width * (1 - 2 * fig.g_po.axis_pad_x)
+	h := fig.g_po.height * (1 - 2 * fig.g_po.axis_pad_y)
+	fig.ctx.draw_rect_empty(x_c, y_c, w, h, gx.black)
+
 	for plot in fig.plots {
 		plot.draw(fig.ctx, fig.g_po)
 	}
