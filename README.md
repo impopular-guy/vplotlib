@@ -17,3 +17,5 @@ fn main() {
 	fig.show()
 }
 ```
+
+![vplotlib_Screenshot 2022-12-31 004456](https://user-images.githubusercontent.com/34854740/210105140-d5fd7242-be5c-431d-af67-a93428390c00.png)
