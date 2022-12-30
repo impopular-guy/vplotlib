@@ -1,6 +1,7 @@
 module main
 
 import vplotlib as plt
+import gx
 import rand
 
 fn main() {
@@ -18,6 +19,7 @@ fn main() {
 	mut fig := plt.new_figure(title: 'Multiple Plots')
 	fig.scatter(x, y, mut plt.PlotOptions{})
 	fig.line(x, y1, mut plt.PlotOptions{})
+	fig.line(x, y, mut plt.PlotOptions{line_color: gx.red})
 	fig.show()
 
 	plt.l_info('MAIN END')

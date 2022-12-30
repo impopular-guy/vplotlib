@@ -42,9 +42,9 @@ fn (plot &LinePlot) draw(ctx &gg.Context) {
 
 	mut x := plot.po.norm_x(plot.x[0])
 	mut y := plot.po.norm_y(plot.y[0])
-	for i := 1; i < plot.x.len - 1; i += 1 {
-		x2 := plot.po.norm_x(plot.x[i + 1])
-		y2 := plot.po.norm_y(plot.y[i + 1])
+	for i := 1; i < plot.x.len; i += 1 {
+		x2 := plot.po.norm_x(plot.x[i])
+		y2 := plot.po.norm_y(plot.y[i])
 		ctx.draw_line_with_config(x, y, x2, y2, cnf)
 		x, y = x2, y2
 	}
