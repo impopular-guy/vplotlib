@@ -3,7 +3,7 @@ module vplotlib
 import time
 
 pub const (
-	version = '0.0.0'
+	version = '0.0.1'
 )
 
 pub fn l_info(s string) {

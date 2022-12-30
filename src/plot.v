@@ -48,13 +48,15 @@ fn frame(fig &Figure) {
 	h := fig.g_po.height * (1 - 2 * fig.g_po.axis_pad_y)
 	fig.ctx.draw_rect_empty(x_c, y_c, w, h, gx.black)
 
+	// fig.ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.g_po.title)
+
 	for plot in fig.plots {
 		plot.draw(fig.ctx, fig.g_po)
 	}
 	fig.ctx.end()
 }
 
-fn on_resize (e &gg.Event, mut fig Figure){
+fn on_resize(e &gg.Event, mut fig Figure) {
 	fig.g_po.width = e.window_width
 	fig.g_po.height = e.window_height
 }
