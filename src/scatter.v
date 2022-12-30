@@ -10,7 +10,7 @@ struct ScatterPlot {
 	po PlotOptions
 }
 
-pub fn (mut app App) scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
+pub fn (mut fig Figure) scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
 	l_info('SCATTER START')
 
 	// check len(x) == len(y)
@@ -29,7 +29,7 @@ pub fn (mut app App) scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
 	}
 
 	// Add plot
-	app.plots << plot
+	fig.plots << plot
 	l_info('SCATTER END')
 }
 

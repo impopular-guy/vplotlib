@@ -9,7 +9,7 @@ struct LinePlot {
 	po PlotOptions
 }
 
-pub fn (mut app App) line[T](x_in []T, y_in []T, mut po PlotOptions) {
+pub fn (mut fig Figure) line[T](x_in []T, y_in []T, mut po PlotOptions) {
 	l_info('LINE START')
 
 	// check len(x) == len(y)
@@ -29,7 +29,7 @@ pub fn (mut app App) line[T](x_in []T, y_in []T, mut po PlotOptions) {
 	}
 
 	// draw plot
-	app.plots << plot
+	fig.plots << plot
 	l_info('LINE END')
 }
 

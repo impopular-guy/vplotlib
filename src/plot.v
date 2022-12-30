@@ -9,39 +9,39 @@ interface Plot {
 }
 
 // the struct names are subject to change
-struct App {
+struct Figure {
 mut:
 	gg    &gg.Context = unsafe { nil }
 	plots []Plot
 	g_po  PlotOptions // global plotoptions
 }
 
-pub fn new_app(po PlotOptions) &App {
-	mut app := &App{
+pub fn new_figure(po PlotOptions) &Figure {
+	mut fig := &Figure{
 		gg: 0
 		g_po: po
 	}
-	app.gg = gg.new_context(
+	fig.gg = gg.new_context(
 		bg_color: gx.white
 		width: po.width
 		height: po.height
 		create_window: true
 		window_title: po.title
 		frame_fn: frame
-		user_data: app
+		user_data: fig
 	)
-	return app
+	return fig
 }
 
-pub fn (app &App) show() {
+pub fn (fig &Figure) show() {
 	// clean plotoptions here
-	app.gg.run()
+	fig.gg.run()
 }
 
-fn frame(app &App) {
-	app.gg.begin()
-	for plot in app.plots {
-		plot.draw(app.gg)
+fn frame(fig &Figure) {
+	fig.gg.begin()
+	for plot in fig.plots {
+		plot.draw(fig.gg)
 	}
-	app.gg.end()
+	fig.gg.end()
 }

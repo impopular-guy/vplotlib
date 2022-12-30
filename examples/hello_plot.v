@@ -15,10 +15,10 @@ fn main() {
 
 	plt.l_info('MAIN START')
 
-	mut app := plt.new_app(title: 'Multiple Plots')
-	app.scatter(x, y, mut plt.PlotOptions{})
-	app.line(x, y1, mut plt.PlotOptions{})
-	app.show()
+	mut fig := plt.new_figure(title: 'Multiple Plots')
+	fig.scatter(x, y, mut plt.PlotOptions{})
+	fig.line(x, y1, mut plt.PlotOptions{})
+	fig.show()
 
 	plt.l_info('MAIN END')
 }
