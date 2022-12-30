@@ -1,6 +1,6 @@
 module main
 
-import vplotlib as plt
+import vplotlib as vpl
 import gx
 import rand
 
@@ -14,13 +14,13 @@ fn main() {
 		y1 << rand.int()
 	}
 
-	plt.l_info('MAIN START')
+	vpl.l_info('MAIN START')
 
-	mut fig := plt.new_figure(title: 'Multiple Plots')
-	fig.scatter(x, y, mut plt.PlotOptions{})
-	fig.line(x, y1, mut plt.PlotOptions{})
-	fig.line(x, y, mut plt.PlotOptions{line_color: gx.red})
+	mut fig := vpl.new_figure(title: 'Multiple Plots')
+	fig.scatter(x, y, mut vpl.PlotOptions{})
+	fig.line(x, y1, mut vpl.PlotOptions{})
+	fig.line(x, y, mut vpl.PlotOptions{line_color: gx.red})
 	fig.show()
 
-	plt.l_info('MAIN END')
+	vpl.l_info('MAIN END')
 }
