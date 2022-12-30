@@ -21,7 +21,7 @@ pub fn (mut fig Figure) line[T](x_in []T, y_in []T, mut po PlotOptions) {
 		x << f32(x_in[i])
 		y << f32(y_in[i])
 	}
-	po.update_lims(x, y)
+	po.find_axis_lims(x, y)
 	plot := LinePlot{
 		x: x
 		y: y
@@ -30,21 +30,23 @@ pub fn (mut fig Figure) line[T](x_in []T, y_in []T, mut po PlotOptions) {
 
 	// draw plot
 	fig.plots << plot
+	fig.g_po.update_lims(plot.po.x_lim, plot.po.y_lim)
+
 	l_info('LINE END')
 }
 
-fn (plot &LinePlot) draw(ctx &gg.Context) {
+fn (plot &LinePlot) draw(ctx &gg.Context, g_po PlotOptions) {
 	cnf := gg.PenConfig{
 		color: plot.po.line_color
 		line_type: plot.po.line_type
 		thickness: plot.po.line_thickness
 	}
 
-	mut x := plot.po.norm_x(plot.x[0])
-	mut y := plot.po.norm_y(plot.y[0])
+	mut x := g_po.norm_x(plot.x[0])
+	mut y := g_po.norm_y(plot.y[0])
 	for i := 1; i < plot.x.len; i += 1 {
-		x2 := plot.po.norm_x(plot.x[i])
-		y2 := plot.po.norm_y(plot.y[i])
+		x2 := g_po.norm_x(plot.x[i])
+		y2 := g_po.norm_y(plot.y[i])
 		ctx.draw_line_with_config(x, y, x2, y2, cnf)
 		x, y = x2, y2
 	}

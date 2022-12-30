@@ -5,13 +5,13 @@ import gx
 
 interface Plot {
 	po PlotOptions
-	draw(&gg.Context)
+	draw(&gg.Context, PlotOptions)
 }
 
 // the struct names are subject to change
 struct Figure {
 mut:
-	ctx    &gg.Context = unsafe { nil }
+	ctx   &gg.Context = unsafe { nil }
 	plots []Plot
 	g_po  PlotOptions // global plotoptions
 }
@@ -34,14 +34,15 @@ pub fn new_figure(po PlotOptions) &Figure {
 }
 
 pub fn (fig &Figure) show() {
-	// clean plotoptions here
+	// clean/update global plotoptions here
+
 	fig.ctx.run()
 }
 
 fn frame(fig &Figure) {
 	fig.ctx.begin()
 	for plot in fig.plots {
-		plot.draw(fig.ctx)
+		plot.draw(fig.ctx, fig.g_po)
 	}
 	fig.ctx.end()
 }
