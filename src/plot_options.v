@@ -9,8 +9,8 @@ pub mut:
 	width  int    = 600
 	title  string = 'Plot'
 	// axes limits
-	x_lim []f32 = [f32(-10), 10]
-	y_lim []f32 = [f32(-10), 10]
+	x_lim []f32
+	y_lim []f32
 	// padding
 	pad_x f32 = 10
 	pad_y f32 = 10

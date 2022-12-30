@@ -9,7 +9,7 @@ struct LinePlot {
 	po PlotOptions
 }
 
-pub fn line[T](x_in []T, y_in []T, mut po PlotOptions) {
+pub fn (mut app App) line[T](x_in []T, y_in []T, mut po PlotOptions) {
 	l_info('LINE START')
 
 	// check len(x) == len(y)
@@ -22,14 +22,14 @@ pub fn line[T](x_in []T, y_in []T, mut po PlotOptions) {
 		y << f32(y_in[i])
 	}
 	po.update_lims(x, y)
-	mut plot := LinePlot{
+	plot := LinePlot{
 		x: x
 		y: y
 		po: unsafe { po }
 	}
 
 	// draw plot
-	run(plot)
+	app.plots << plot
 	l_info('LINE END')
 }
 

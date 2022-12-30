@@ -10,7 +10,7 @@ struct ScatterPlot {
 	po PlotOptions
 }
 
-pub fn scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
+pub fn (mut app App) scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
 	l_info('SCATTER START')
 
 	// check len(x) == len(y)
@@ -22,14 +22,14 @@ pub fn scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
 		y << f32(y_in[i])
 	}
 	po.update_lims(x, y)
-	mut plot := ScatterPlot{
+	plot := ScatterPlot{
 		x: x
 		y: y
 		po: unsafe { po }
 	}
 
-	// draw plot
-	run(plot)
+	// Add plot
+	app.plots << plot
 	l_info('SCATTER END')
 }
 

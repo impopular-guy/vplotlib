@@ -8,31 +8,40 @@ interface Plot {
 	draw(&gg.Context)
 }
 
+// the struct names are subject to change
 struct App {
 mut:
-	gg   &gg.Context = unsafe { nil }
-	plot Plot
+	gg    &gg.Context = unsafe { nil }
+	plots []Plot
+	g_po  PlotOptions // global plotoptions
 }
 
-fn run(plot Plot) {
+pub fn new_app(po PlotOptions) &App {
 	mut app := &App{
 		gg: 0
-		plot: plot
+		g_po: po
 	}
 	app.gg = gg.new_context(
 		bg_color: gx.white
-		width: plot.po.width
-		height: plot.po.height
+		width: po.width
+		height: po.height
 		create_window: true
-		window_title: plot.po.title
+		window_title: po.title
 		frame_fn: frame
 		user_data: app
 	)
+	return app
+}
+
+pub fn (app &App) show() {
+	// clean plotoptions here
 	app.gg.run()
 }
 
 fn frame(app &App) {
 	app.gg.begin()
-	app.plot.draw(app.gg)
+	for plot in app.plots {
+		plot.draw(app.gg)
+	}
 	app.gg.end()
 }
