@@ -28,6 +28,7 @@ pub fn new_figure(po PlotOptions) &Figure {
 		create_window: true
 		window_title: po.title
 		frame_fn: frame
+		resized_fn: on_resize
 		user_data: fig
 	)
 	return fig
@@ -51,4 +52,9 @@ fn frame(fig &Figure) {
 		plot.draw(fig.ctx, fig.g_po)
 	}
 	fig.ctx.end()
+}
+
+fn on_resize (e &gg.Event, mut fig Figure){
+	fig.g_po.width = e.window_width
+	fig.g_po.height = e.window_height
 }

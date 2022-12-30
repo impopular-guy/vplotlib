@@ -21,7 +21,7 @@ fn main() {
 	mut fig := vpl.new_figure(title: 'Multiple Plots')
 	fig.scatter(x, y, mut vpl.PlotOptions{})
 	fig.line(x1, y1, mut vpl.PlotOptions{})
-	fig.line(x, y, mut vpl.PlotOptions{ line_color: gx.red })
+	fig.line(x, y, mut vpl.PlotOptions{ line_color: gx.red, line_type: .dashed})
 	fig.show()
 
 	vpl.l_info('MAIN END')
