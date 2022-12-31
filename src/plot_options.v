@@ -1,8 +1,5 @@
 module vplotlib
 
-import gg
-import gx
-
 pub struct PlotOptions {
 pub mut:
 	// globally applied params
@@ -18,11 +15,6 @@ pub mut:
 	// padding for axis from win border. [0,1]
 	axis_pad_x f32 = 0.1
 	axis_pad_y f32 = 0.1
-	// locally applied params
-	// line configs
-	line_color     gx.Color       = gx.blue
-	line_type      gg.PenLineType = .solid
-	line_thickness int = 2
 }
 
 fn (po PlotOptions) norm_x(x f32) f32 {

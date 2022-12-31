@@ -15,15 +15,16 @@ fn main() {
 		x1 << i + 5
 		y << rand.int()
 		y1 << rand.int()
-		s << rand.f32() * 10 + 5
+		s << rand.f32() * 18 + 6
 	}
 
 	vpl.l_info('MAIN START')
 
 	mut fig := vpl.new_figure(title: 'Multiple Plots')
+	fig.line(vpl.LineParams[int]{ x: x1, y: y1 })
+	fig.line(vpl.LineParams[int]{ x: x, y: y, color: gx.green, line_type: .dashed })
 	fig.scatter(vpl.ScatterParams[int]{ x: x, y: y, s: s, color: gx.red })
-	// fig.line(x1, y1, mut vpl.PlotOptions{})
-	// fig.line(x, y, mut vpl.PlotOptions{ line_color: gx.red, line_type: .dashed })
+	fig.scatter(vpl.ScatterParams[int]{ x: x1, y: y1, s: s, color: gx.cyan, marker: .square })
 	fig.show()
 
 	vpl.l_info('MAIN END')

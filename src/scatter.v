@@ -3,8 +3,9 @@ module vplotlib
 import gg
 import gx
 
-enum MarkerType as u8 {
+pub enum MarkerType {
 	circle
+	square
 }
 
 pub struct ScatterParams[T] {
@@ -12,7 +13,7 @@ mut:
 	x      []T
 	y      []T
 	s      []f32
-	size   int        = 3
+	size   int        = 6
 	marker MarkerType = .circle
 	color  gx.Color   = gx.blue
 }
@@ -66,7 +67,18 @@ fn (plot ScatterPlot) draw(ctx &gg.Context, g_po PlotOptions) {
 				if plot.size_arr {
 					s = plot.s[i]
 				}
-				ctx.draw_circle_filled(x, y, s, plot.color)
+				ctx.draw_circle_filled(x, y, s/2, plot.color)
+			}
+		}
+		.square{
+			for i, xi in plot.x {
+				x := g_po.norm_x(xi)
+				y := g_po.norm_y(plot.y[i])
+				mut s := plot.size
+				if plot.size_arr {
+					s = plot.s[i]
+				}
+				ctx.draw_rect_filled(x-s/2, y-s/2, s, s, plot.color)
 			}
 		}
 	}
