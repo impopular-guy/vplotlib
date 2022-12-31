@@ -24,9 +24,7 @@ struct LinePlot {
 	y_lim     []f32
 }
 
-pub fn (mut fig Figure) line[T](params LineParams[T]) {
-	l_info('LINE START')
-
+pub fn line[T](params LineParams[T]) LinePlot {
 	// check len(x) == len(y)
 	// check len(x) > 2
 
@@ -42,12 +40,8 @@ pub fn (mut fig Figure) line[T](params LineParams[T]) {
 		x_lim: find_axis_lims(x)
 		y_lim: find_axis_lims(y)
 	}
-
-	// draw plot
-	fig.plots << plot
-	fig.g_po.update_lims(plot.x_lim, plot.y_lim)
-
-	l_info('LINE END')
+	l_info('ADDED PLOT: ${typeof(plot).name}')
+	return plot
 }
 
 fn (plot &LinePlot) draw(ctx &gg.Context, g_po PlotOptions) {

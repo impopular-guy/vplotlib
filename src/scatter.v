@@ -30,8 +30,7 @@ struct ScatterPlot {
 	y_lim    []f32
 }
 
-pub fn (mut fig Figure) scatter[T](params ScatterParams[T]) {
-	l_info('SCATTER START')
+pub fn scatter[T](params ScatterParams[T]) ScatterPlot {
 	// check len(x) == len(y)
 
 	// init
@@ -49,12 +48,8 @@ pub fn (mut fig Figure) scatter[T](params ScatterParams[T]) {
 		x_lim: find_axis_lims(x)
 		y_lim: find_axis_lims(y)
 	}
-
-	// Add plot/ upate po
-	fig.plots << plot
-	fig.g_po.update_lims(plot.x_lim, plot.y_lim)
-
-	l_info('SCATTER END')
+	l_info('ADDED PLOT: ${typeof(plot).name}')
+	return plot
 }
 
 fn (plot ScatterPlot) draw(ctx &gg.Context, g_po PlotOptions) {
@@ -67,10 +62,10 @@ fn (plot ScatterPlot) draw(ctx &gg.Context, g_po PlotOptions) {
 				if plot.size_arr {
 					s = plot.s[i]
 				}
-				ctx.draw_circle_filled(x, y, s/2, plot.color)
+				ctx.draw_circle_filled(x, y, s / 2, plot.color)
 			}
 		}
-		.square{
+		.square {
 			for i, xi in plot.x {
 				x := g_po.norm_x(xi)
 				y := g_po.norm_y(plot.y[i])
@@ -78,7 +73,7 @@ fn (plot ScatterPlot) draw(ctx &gg.Context, g_po PlotOptions) {
 				if plot.size_arr {
 					s = plot.s[i]
 				}
-				ctx.draw_rect_filled(x-s/2, y-s/2, s, s, plot.color)
+				ctx.draw_rect_filled(x - s / 2, y - s / 2, s, s, plot.color)
 			}
 		}
 	}

@@ -8,6 +8,8 @@ pub const (
 )
 
 interface Plot {
+	x_lim []f32
+	y_lim []f32
 	draw(&gg.Context, PlotOptions)
 }
 
@@ -15,11 +17,13 @@ interface Plot {
 struct Figure {
 mut:
 	ctx   &gg.Context = unsafe { nil }
+	rows  int = 1
+	cols  int = 1
 	plots []Plot
 	g_po  PlotOptions // global plotoptions
 }
 
-pub fn new_figure(po PlotOptions) &Figure {
+pub fn figure(po PlotOptions) &Figure {
 	mut fig := &Figure{
 		ctx: 0
 		g_po: po
@@ -37,9 +41,21 @@ pub fn new_figure(po PlotOptions) &Figure {
 	return fig
 }
 
-pub fn (fig &Figure) show() {
-	// clean/update global plotoptions here
+pub struct AddParams {
+	i     int
+	j     int
+	plots []Plot
+}
 
+pub fn (mut fig Figure) add(params AddParams) {
+	// clean/update global plotoptions here
+	for plot in params.plots {
+		fig.plots << plot
+		fig.g_po.update_lims(plot.x_lim, plot.y_lim)
+	}
+}
+
+pub fn (fig &Figure) show() {
 	fig.ctx.run()
 }
 
