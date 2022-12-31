@@ -3,40 +3,71 @@ module vplotlib
 import gg
 import gx
 
-struct ScatterPlot {
-	x []f32
-	y []f32
-
-	po PlotOptions
+enum MarkerType as u8 {
+	circle
 }
 
-pub fn (mut fig Figure) scatter[T](x_in []T, y_in []T, mut po PlotOptions) {
-	l_info('SCATTER START')
+pub struct ScatterParams[T] {
+mut:
+	x      []T
+	y      []T
+	s      []f32
+	size   int        = 3
+	marker MarkerType = .circle
+	color  gx.Color   = gx.blue
+}
 
+struct ScatterPlot {
+	x        []f32
+	y        []f32
+	s        []f32
+	size_arr bool
+	size     f32
+	marker   MarkerType
+	color    gx.Color
+	x_lim    []f32
+	y_lim    []f32
+}
+
+pub fn (mut fig Figure) scatter[T](params ScatterParams[T]) {
+	l_info('SCATTER START')
 	// check len(x) == len(y)
 
 	// init
-	mut x, mut y := []f32{}, []f32{}
-	for i, _ in x_in {
-		x << f32(x_in[i])
-		y << f32(y_in[i])
-	}
-	po.find_axis_lims(x, y)
+	x := to_f32_array(params.x)
+	y := to_f32_array(params.y)
+	size_arr := params.s.len == x.len
 	plot := ScatterPlot{
 		x: x
 		y: y
-		po: unsafe { po }
+		s: params.s
+		size_arr: size_arr
+		size: params.size
+		marker: params.marker
+		color: params.color
+		x_lim: find_axis_lims(x)
+		y_lim: find_axis_lims(y)
 	}
 
 	// Add plot/ upate po
 	fig.plots << plot
-	fig.g_po.update_lims(plot.po.x_lim, plot.po.y_lim)
+	fig.g_po.update_lims(plot.x_lim, plot.y_lim)
 
 	l_info('SCATTER END')
 }
 
-fn (plot &ScatterPlot) draw(ctx &gg.Context, g_po PlotOptions) {
-	for i, xi in plot.x {
-		ctx.draw_circle_filled(g_po.norm_x(xi), g_po.norm_y(plot.y[i]), 5, gx.black)
+fn (plot ScatterPlot) draw(ctx &gg.Context, g_po PlotOptions) {
+	match plot.marker {
+		.circle {
+			for i, xi in plot.x {
+				x := g_po.norm_x(xi)
+				y := g_po.norm_y(plot.y[i])
+				mut s := plot.size
+				if plot.size_arr {
+					s = plot.s[i]
+				}
+				ctx.draw_circle_filled(x, y, s, plot.color)
+			}
+		}
 	}
 }

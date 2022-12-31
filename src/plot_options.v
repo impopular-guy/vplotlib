@@ -35,31 +35,6 @@ fn (po PlotOptions) norm_y(y f32) f32 {
 	return po.height - po.pad_y * po.height + (2 * po.pad_y * po.height - po.height) * n_y
 }
 
-fn (mut po PlotOptions) find_axis_lims(x []f32, y []f32) {
-	mut x_min := x[0]
-	mut y_min := y[0]
-	mut x_max := x[0]
-	mut y_max := y[0]
-	for xi in x {
-		if xi < x_min {
-			x_min = xi
-		}
-		if xi > x_max {
-			x_max = xi
-		}
-	}
-	for yi in y {
-		if yi < y_min {
-			y_min = yi
-		}
-		if yi > y_max {
-			y_max = yi
-		}
-	}
-	po.x_lim = [x_min, x_max]
-	po.y_lim = [y_min, y_max]
-}
-
 fn (mut po PlotOptions) update_lims(x_lim []f32, y_lim []f32) {
 	if po.x_lim.len == 0 {
 		po.x_lim = x_lim
