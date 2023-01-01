@@ -23,10 +23,10 @@ fn main() {
 	mut fig := vpl.figure(title: 'Multiple Plots')
 	fig.add(
 		plots: [
-			vpl.line(vpl.LineParams[int]{ x: x1, y: y1 }),
-			vpl.line(vpl.LineParams[int]{ x: x, y: y, color: gx.green, line_type: .dashed }),
-			vpl.scatter(vpl.ScatterParams[int]{ x: x, y: y, s: s, color: gx.red }),
-			vpl.scatter(vpl.ScatterParams[int]{ x: x1, y: y1, s: s, color: gx.cyan, marker: .square }),
+			vpl.line(x: x1, y: y1),
+			vpl.line(x: x, y: y, color: gx.green, line_type: .dashed),
+			vpl.scatter(x: x, y: y, s: s, color: gx.red),
+			vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
 		]
 	)
 	fig.show()
