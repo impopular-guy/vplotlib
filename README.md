@@ -6,14 +6,20 @@ Plotting library for V, inspired by Python's `matplotlib`
 
 ```v
 import vplotlib as vpl
+import gx
 
 fn main() {
-	x, x1, y, y1 := ... // inputs
+	x, x1, y, y1, s := ... // inputs
 
-	mut fig := vpl.new_figure(title: 'Multiple Plots')
-	fig.scatter(x, y, mut vpl.PlotOptions{})
-	fig.line(x1, y1, mut vpl.PlotOptions{})
-	fig.line(x, y, mut vpl.PlotOptions{ line_color: gx.red, line_type: .dashed })
+	mut fig := vpl.figure(title: 'Multiple Plots')
+	fig.add(
+		plots: [
+			vpl.line( x: x1, y: y1 ),
+			vpl.line( x: x, y: y, color: gx.green, line_type: .dashed ),
+			vpl.scatter( x: x, y: y, s: s, color: gx.red ),
+			vpl.scatter( x: x1, y: y1, s: s, color: gx.cyan, marker: .square ),
+		]
+	)
 	fig.show()
 }
 ```
