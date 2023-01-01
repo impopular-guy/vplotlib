@@ -1,6 +1,7 @@
 module vplotlib
 
 import time
+import math
 
 pub fn l_info(s string) {
 	println('INFO ${time.now()} : ${s}')
@@ -26,4 +27,16 @@ fn find_axis_lims(x []f32) []f32 {
 		}
 	}
 	return [x_min, x_max]
+}
+
+fn get_fraction(n int) []f64 {
+	mut frac := []f64{}
+	mut sum := f64(0)
+	for i := 0; i < n; i++ {
+		h := math.round_sig(1.0 / f64(n), 3)
+		frac << h
+		sum += h
+	}
+	frac[0] += math.round_sig(1.0 - sum, 3)
+	return frac
 }

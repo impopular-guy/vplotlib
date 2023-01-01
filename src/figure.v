@@ -4,7 +4,7 @@ import gg
 import gx
 import ui
 
-interface Plot {
+pub interface Plot {
 	x_lim []f32
 	y_lim []f32
 	draw(&gg.Context, &Figure)
@@ -64,17 +64,33 @@ pub fn figure(params FigureParams) &Figure {
 		rows: params.rows
 		cols: params.cols
 	}
+	mut children := []ui.Widget{}
+	for i := 0; i < fig.rows; i++ {
+		mut row_children := []ui.Widget{}
+		for j := 0; j < fig.cols; j++ {
+			row_children << ui.canvas(
+				id: 'canvas_${i}_${j}'
+				width: params.width / params.cols
+				height: params.height / params.rows
+				draw_fn: fig.draw
+			)
+		}
+		children << ui.row(
+			id: 'row_${i}'
+			widths: get_fraction(fig.cols)
+			children: row_children
+		)
+	}
 	fig.window = ui.window(
 		width: params.width
 		height: params.height
 		title: params.title
 		mode: .resizable
 		children: [
-			ui.canvas(
-				id: 'canvas1'
-				width: params.width
-				height: params.height
-				draw_fn: fig.draw
+			ui.column(
+				id: 'main_col'
+				heights: get_fraction(fig.rows)
+				children: children
 			),
 		]
 	)
@@ -100,22 +116,17 @@ pub fn (fig &Figure) show() {
 }
 
 fn (fig &Figure) draw(ctx &gg.Context, c &ui.Canvas) {
-	x_c := fig.width * fig.axis_pad_x
-	y_c := fig.height * fig.axis_pad_y
-	w := fig.width * (1 - 2 * fig.axis_pad_x)
-	h := fig.height * (1 - 2 * fig.axis_pad_y)
-	ctx.draw_rect_empty(x_c, y_c, w, h, gx.black)
+	x_c := c.width * fig.axis_pad_x
+	y_c := c.height * fig.axis_pad_y
+	w := c.width * (1 - 2 * fig.axis_pad_x)
+	h := c.height * (1 - 2 * fig.axis_pad_y)
+	ctx.draw_rect_empty(x_c + c.x, y_c + c.y, w, h, gx.black)
 
 	// ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
-	for plot in fig.plots {
-		plot.draw(ctx, fig)
-	}
+	// for plot in fig.plots {
+	// 	plot.draw(ctx, fig)
+	// }
 }
-
-// fn on_resize(window &Window, w int, h int) {
-// 	fig.width = w
-// 	fig.height = h
-// }
 
 fn (mut fig Figure) update_lims(x_lim []f32, y_lim []f32) {
 	if fig.x_lim.len == 0 {
