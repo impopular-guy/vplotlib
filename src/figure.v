@@ -2,11 +2,12 @@ module vplotlib
 
 import gg
 import gx
+import ui
 
 interface Plot {
 	x_lim []f32
 	y_lim []f32
-	draw(&Figure)
+	draw(&gg.Context, &Figure)
 }
 
 pub struct FigureParams {
@@ -29,10 +30,11 @@ mut:
 }
 
 // the struct names are subject to change
+[heap]
 struct Figure {
 mut:
-	ctx   &gg.Context = unsafe { nil }
-	plots []Plot
+	window &ui.Window
+	plots  []Plot
 
 	height     int
 	width      int
@@ -49,7 +51,7 @@ mut:
 
 pub fn figure(params FigureParams) &Figure {
 	mut fig := &Figure{
-		ctx: 0
+		window: 0
 		height: params.height
 		width: params.width
 		title: params.title
@@ -62,15 +64,19 @@ pub fn figure(params FigureParams) &Figure {
 		rows: params.rows
 		cols: params.cols
 	}
-	fig.ctx = gg.new_context(
-		bg_color: gx.white
+	fig.window = ui.window(
 		width: params.width
 		height: params.height
-		create_window: true
-		window_title: params.title
-		frame_fn: frame
-		resized_fn: on_resize
-		user_data: fig
+		title: params.title
+		mode: .resizable
+		children: [
+			ui.canvas(
+				id: 'canvas1'
+				width: params.width
+				height: params.height
+				draw_fn: fig.draw
+			),
+		]
 	)
 	return fig
 }
@@ -90,29 +96,26 @@ pub fn (mut fig Figure) add(params AddParams) {
 }
 
 pub fn (fig &Figure) show() {
-	fig.ctx.run()
+	ui.run(fig.window)
 }
 
-fn frame(fig &Figure) {
-	fig.ctx.begin()
+fn (fig &Figure) draw(ctx &gg.Context, c &ui.Canvas) {
 	x_c := fig.width * fig.axis_pad_x
 	y_c := fig.height * fig.axis_pad_y
 	w := fig.width * (1 - 2 * fig.axis_pad_x)
 	h := fig.height * (1 - 2 * fig.axis_pad_y)
-	fig.ctx.draw_rect_empty(x_c, y_c, w, h, gx.black)
+	ctx.draw_rect_empty(x_c, y_c, w, h, gx.black)
 
-	// fig.ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
-
+	// ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
 	for plot in fig.plots {
-		plot.draw(fig)
+		plot.draw(ctx, fig)
 	}
-	fig.ctx.end()
 }
 
-fn on_resize(e &gg.Event, mut fig Figure) {
-	fig.width = e.window_width
-	fig.height = e.window_height
-}
+// fn on_resize(window &Window, w int, h int) {
+// 	fig.width = w
+// 	fig.height = h
+// }
 
 fn (mut fig Figure) update_lims(x_lim []f32, y_lim []f32) {
 	if fig.x_lim.len == 0 {

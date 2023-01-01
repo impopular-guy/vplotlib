@@ -1,5 +1,6 @@
 module vplotlib
 
+import gg
 import gx
 
 pub enum MarkerType {
@@ -51,7 +52,7 @@ pub fn scatter[T](params ScatterParams[T]) ScatterPlot {
 	return plot
 }
 
-fn (plot ScatterPlot) draw(fig &Figure) {
+fn (plot ScatterPlot) draw(ctx &gg.Context, fig &Figure) {
 	match plot.marker {
 		.circle {
 			for i, xi in plot.x {
@@ -61,7 +62,7 @@ fn (plot ScatterPlot) draw(fig &Figure) {
 				if plot.size_arr {
 					s = plot.s[i]
 				}
-				fig.ctx.draw_circle_filled(x, y, s / 2, plot.color)
+				ctx.draw_circle_filled(x, y, s / 2, plot.color)
 			}
 		}
 		.square {
@@ -72,7 +73,7 @@ fn (plot ScatterPlot) draw(fig &Figure) {
 				if plot.size_arr {
 					s = plot.s[i]
 				}
-				fig.ctx.draw_rect_filled(x - s / 2, y - s / 2, s, s, plot.color)
+				ctx.draw_rect_filled(x - s / 2, y - s / 2, s, s, plot.color)
 			}
 		}
 	}

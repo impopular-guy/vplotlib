@@ -44,7 +44,7 @@ pub fn line[T](params LineParams[T]) LinePlot {
 	return plot
 }
 
-fn (plot &LinePlot) draw(fig &Figure) {
+fn (plot &LinePlot) draw(ctx &gg.Context, fig &Figure) {
 	cnf := gg.PenConfig{
 		color: plot.color
 		line_type: plot.line_type
@@ -55,7 +55,7 @@ fn (plot &LinePlot) draw(fig &Figure) {
 	for i := 1; i < plot.x.len; i += 1 {
 		x2 := fig.norm_x(plot.x[i])
 		y2 := fig.norm_y(plot.y[i])
-		fig.ctx.draw_line_with_config(x, y, x2, y2, cnf)
+		ctx.draw_line_with_config(x, y, x2, y2, cnf)
 		x, y = x2, y2
 	}
 }
