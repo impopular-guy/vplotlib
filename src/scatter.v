@@ -53,12 +53,11 @@ pub fn scatter[T](params ScatterParams[T]) ScatterPlot {
 	return plot
 }
 
-fn (plot ScatterPlot) draw(ctx &gg.Context, c &ui.Canvas, fig &Figure) {
+fn (plot ScatterPlot) draw(ctx &gg.Context, c &ui.Canvas, fig &SubFigure) {
 	match plot.marker {
 		.circle {
 			for i, xi in plot.x {
-				x := fig.norm_x(xi)
-				y := fig.norm_y(plot.y[i])
+				x, y := fig.norm_xy(xi, plot.y[i], c.width, c.height)
 				mut s := plot.size
 				if plot.size_arr {
 					s = plot.s[i]
@@ -68,8 +67,7 @@ fn (plot ScatterPlot) draw(ctx &gg.Context, c &ui.Canvas, fig &Figure) {
 		}
 		.square {
 			for i, xi in plot.x {
-				x := fig.norm_x(xi)
-				y := fig.norm_y(plot.y[i])
+				x, y := fig.norm_xy(xi, plot.y[i], c.width, c.height)
 				mut s := plot.size
 				if plot.size_arr {
 					s = plot.s[i]
