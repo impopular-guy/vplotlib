@@ -20,15 +20,15 @@ mut:
 }
 
 struct ScatterPlot {
-	x        []f32
-	y        []f32
-	s        []f32
-	size_arr bool
-	size     f32
-	marker   MarkerType
-	color    gx.Color
-	x_lim    []f32
-	y_lim    []f32
+	x            []f32
+	y            []f32
+	s            []f32
+	has_size_arr bool
+	size         f32
+	marker       MarkerType
+	color        gx.Color
+	x_lim        []f32
+	y_lim        []f32
 }
 
 pub fn scatter[T](params ScatterParams[T]) ScatterPlot {
@@ -37,12 +37,12 @@ pub fn scatter[T](params ScatterParams[T]) ScatterPlot {
 	// init
 	x := to_f32_array(params.x)
 	y := to_f32_array(params.y)
-	size_arr := params.s.len == x.len
+	has_size_arr := params.s.len == x.len
 	plot := ScatterPlot{
 		x: x
 		y: y
 		s: params.s
-		size_arr: size_arr
+		has_size_arr: has_size_arr
 		size: params.size
 		marker: params.marker
 		color: params.color
@@ -59,20 +59,20 @@ fn (plot ScatterPlot) draw(ctx &gg.Context, c &ui.Canvas, fig &SubFigure) {
 			for i, xi in plot.x {
 				x, y := fig.norm_xy(xi, plot.y[i], c.width, c.height)
 				mut s := plot.size
-				if plot.size_arr {
+				if plot.has_size_arr {
 					s = plot.s[i]
 				}
-				ctx.draw_circle_filled(x, y, s / 2, plot.color)
+				ctx.draw_circle_filled(x + c.x, y + c.y, s / 2, plot.color)
 			}
 		}
 		.square {
 			for i, xi in plot.x {
 				x, y := fig.norm_xy(xi, plot.y[i], c.width, c.height)
 				mut s := plot.size
-				if plot.size_arr {
+				if plot.has_size_arr {
 					s = plot.s[i]
 				}
-				ctx.draw_rect_filled(x - s / 2, y - s / 2, s, s, plot.color)
+				ctx.draw_rect_filled(c.x + x - s / 2, c.y + y - s / 2, s, s, plot.color)
 			}
 		}
 	}

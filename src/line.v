@@ -54,7 +54,7 @@ fn (plot &LinePlot) draw(ctx &gg.Context, c &ui.Canvas, fig &SubFigure) {
 	mut x, mut y := fig.norm_xy(plot.x[0], plot.y[0], c.width, c.height)
 	for i := 1; i < plot.x.len; i += 1 {
 		x2, y2 := fig.norm_xy(plot.x[i], plot.y[i], c.width, c.height)
-		ctx.draw_line_with_config(x, y, x2, y2, cnf)
+		ctx.draw_line_with_config(x + c.x, y + c.y, x2 + c.x, y2 + c.y, cnf)
 		x, y = x2, y2
 	}
 }
