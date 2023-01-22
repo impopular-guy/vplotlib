@@ -107,8 +107,8 @@ pub fn figure(params FigureParams) &Figure {
 }
 
 pub struct AddParams {
-	i     int = 0
-	j     int = 0
+	i     int
+	j     int
 	plots []Plot
 }
 
@@ -129,7 +129,7 @@ fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	y_c := c.height * fig.axis_pad_y
 	w := c.width * (1 - 2 * fig.axis_pad_x)
 	h := c.height * (1 - 2 * fig.axis_pad_y)
-	c.draw_device_rect_empty(d, x_c + c.x, y_c + c.y, w, h, gx.black)
+	c.draw_device_rect_empty(d, x_c, y_c, w, h, gx.black)
 
 	// ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
 	for plot in fig.plots {
