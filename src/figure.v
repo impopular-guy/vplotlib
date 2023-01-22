@@ -1,13 +1,13 @@
 module vplotlib
 
-// import gg
+import gg
 import gx
 import ui
 
 pub interface Plot {
 	x_lim []f32
 	y_lim []f32
-	draw(ui.DrawDevice, &ui.CanvasLayout, &Figure)
+	draw(&gg.Context, &ui.Canvas, &Figure)
 }
 
 pub struct FigureParams {
@@ -66,21 +66,21 @@ pub fn figure(params FigureParams) &Figure {
 	}
 	mut children := []ui.Widget{}
 	if params.rows == 1 && params.cols == 1 {
-		children << ui.canvas_layout(
+		children << ui.canvas(
 			id: 'canvas_0_0'
 			width: params.width / params.cols
 			height: params.height / params.rows
-			on_draw: fig.draw
+			draw_fn: fig.draw
 		)
 	} else {
 		for i := 0; i < fig.rows; i++ {
 			mut row_children := []ui.Widget{}
 			for j := 0; j < fig.cols; j++ {
-				row_children << ui.canvas_layout(
+				row_children << ui.canvas(
 					id: 'canvas_${i}_${j}'
 					width: params.width / params.cols
 					height: params.height / params.rows
-					on_draw: fig.draw
+					draw_fn: fig.draw
 				)
 			}
 			children << ui.row(
@@ -124,16 +124,16 @@ pub fn (fig &Figure) show() {
 	ui.run(fig.window)
 }
 
-fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (fig &Figure) draw(ctx &gg.Context, c &ui.Canvas) {
 	x_c := c.width * fig.axis_pad_x
 	y_c := c.height * fig.axis_pad_y
 	w := c.width * (1 - 2 * fig.axis_pad_x)
 	h := c.height * (1 - 2 * fig.axis_pad_y)
-	c.draw_device_rect_empty(d, x_c + c.x, y_c + c.y, w, h, gx.black)
+	ctx.draw_rect_empty(x_c + c.x, y_c + c.y, w, h, gx.black)
 
 	// ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
 	for plot in fig.plots {
-		plot.draw(d, c, fig)
+		plot.draw(ctx, c, fig)
 	}
 }
 

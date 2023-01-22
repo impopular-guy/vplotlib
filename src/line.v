@@ -45,18 +45,18 @@ pub fn line[T](params LineParams[T]) LinePlot {
 	return plot
 }
 
-fn (plot &LinePlot) draw(d ui.DrawDevice, c &ui.CanvasLayout, fig &Figure) {
-	// cnf := gg.PenConfig{
-	// 	color: plot.color
-	// 	line_type: plot.line_type
-	// 	thickness: plot.thickness
-	// }
+fn (plot &LinePlot) draw(ctx &gg.Context, c &ui.Canvas, fig &Figure) {
+	cnf := gg.PenConfig{
+		color: plot.color
+		line_type: plot.line_type
+		thickness: plot.thickness
+	}
 	mut x := fig.norm_x(plot.x[0])
 	mut y := fig.norm_y(plot.y[0])
 	for i := 1; i < plot.x.len; i += 1 {
 		x2 := fig.norm_x(plot.x[i])
 		y2 := fig.norm_y(plot.y[i])
-		c.draw_device_line(d, x, y, x2, y2, plot.color)
+		ctx.draw_line_with_config(x, y, x2, y2, cnf)
 		x, y = x2, y2
 	}
 }
