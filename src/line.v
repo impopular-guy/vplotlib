@@ -25,9 +25,20 @@ struct LinePlot {
 	y_lim     []f32
 }
 
+fn validate_line_params[T](p LineParams[T]) {
+	if p.x.len != p.y.len {
+		panic('Length of `x` and `y` must be equal')
+	}
+	if p.x.len < 2 {
+		println('vplotlib warning: data length should be greater than 1')
+	}
+	if p.thickness < 1 {
+		panic('`thickness` must be greater or equal to 1')
+	}
+}
+
 pub fn line[T](params LineParams[T]) LinePlot {
-	// check len(x) == len(y)
-	// check len(x) > 2
+	validate_line_params[T](params)
 
 	// init
 	x := to_f32_array(params.x)

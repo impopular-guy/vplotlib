@@ -19,8 +19,8 @@ mut:
 	x_lim []f32
 	y_lim []f32
 	// padding for graph from window border. Should be a value between 0 and 1
-	pad_x f32 = 0.12
-	pad_y f32 = 0.12
+	pad_x f32 = 0.14
+	pad_y f32 = 0.14
 	// padding for axis from win border. [0,1]
 	axis_pad_x f32 = 0.1
 	axis_pad_y f32 = 0.1
@@ -62,7 +62,29 @@ mut:
 	cols       int
 }
 
+fn validate_figure_params(p FigureParams) {
+	if p.pad_x < 0 || p.pad_x > 1 {
+		panic('`pad_x` should be a f32 between 0 and 1')
+	}
+	if p.pad_y < 0 || p.pad_y > 1 {
+		panic('`pad_y` should be a f32 between 0 and 1')
+	}
+	if p.axis_pad_x < 0 || p.axis_pad_x > 1 {
+		panic('`axis_pad_x` should be a f32 between 0 and 1')
+	}
+	if p.axis_pad_y < 0 || p.axis_pad_y > 1 {
+		panic('`axis_pad_y` should be a f32 between 0 and 1')
+	}
+	if p.rows < 1 || p.rows > 10 {
+		panic('`rows` should be an int between 1 and 10 inclusive')
+	}
+	if p.cols < 1 || p.cols > 10 {
+		panic('`cols` should be an int between 1 and 10 inclusive')
+	}
+}
+
 pub fn figure(params FigureParams) &Figure {
+	validate_figure_params(params)
 	mut fig := &Figure{
 		window: 0
 		height: params.height
@@ -145,13 +167,14 @@ pub fn (fig &Figure) show() {
 	ui.run(fig.window)
 }
 
+// Order of drawing:
+// - grid lines if any
+// - plots
+// - rect box
+// - axis ticks
+// - labels and titles if any
+// - legend if any
 fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
-	x_c := c.width * fig.axis_pad_x
-	y_c := c.height * fig.axis_pad_y
-	w := c.width * (1 - 2 * fig.axis_pad_x)
-	h := c.height * (1 - 2 * fig.axis_pad_y)
-	c.draw_device_rect_empty(d, x_c, y_c, w, h, gx.black)
-
 	// ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
 	s_id := c.id.split('_')
 	idx := s_id[1].int() * fig.rows + s_id[2].int()
@@ -159,6 +182,12 @@ fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	for plot in s_fig.plots {
 		plot.draw(d, c, s_fig)
 	}
+
+	x_c := c.width * fig.axis_pad_x
+	y_c := c.height * fig.axis_pad_y
+	w := c.width * (1 - 2 * fig.axis_pad_x)
+	h := c.height * (1 - 2 * fig.axis_pad_y)
+	c.draw_device_rect_empty(d, x_c, y_c, w, h, gx.black)
 }
 
 fn (mut fig SubFigure) update_lims(x_lim []f32, y_lim []f32) {
@@ -187,4 +216,13 @@ fn (fig SubFigure) norm_xy(x f32, y f32, w f32, h f32) (f32, f32) {
 	n_x = fig.pad_x * w + (w - 2 * fig.pad_x * w) * n_x
 	n_y = h - fig.pad_y * h + (2 * fig.pad_y * h - h) * n_y
 	return n_x, n_y
+}
+
+pub fn (mut fig Figure) save_figure(filename string) {
+	f_type := filename.split('.').last()
+	match f_type {
+		'png' { fig.window.png_screenshot(filename) }
+		'svg' { fig.window.svg_screenshot(filename) }
+		else { panic("Save file type can be only 'png' or 'svg'") }
+	}
 }

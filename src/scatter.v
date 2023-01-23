@@ -31,8 +31,20 @@ struct ScatterPlot {
 	y_lim        []f32
 }
 
+fn validate_scatter_params[T](p ScatterParams[T]) {
+	if p.x.len != p.y.len {
+		panic('Length of `x` and `y` must be equal')
+	}
+	if p.s.len > 0 && p.s.len != p.x.len {
+		panic('Length of `s` and `x` must be equal')
+	}
+	if p.size < 1 {
+		panic('`size` must be greater or equal to 1')
+	}
+}
+
 pub fn scatter[T](params ScatterParams[T]) ScatterPlot {
-	// check len(x) == len(y)
+	validate_scatter_params[T](params)
 
 	// init
 	x := to_f32_array(params.x)
