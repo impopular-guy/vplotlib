@@ -24,8 +24,7 @@ fn main() {
 	fig.show()
 }
 ```
-
-![vplotlib_Screenshot 2022-12-31 004456](https://user-images.githubusercontent.com/34854740/210175649-f5a709b4-12cb-4fe9-ae69-aa9678611124.png)
+![Screenshot_20230125_221141](https://user-images.githubusercontent.com/34854740/214625478-062428c0-b06d-42f4-b897-2f9af8a57dc9.png)
 
 
 #### Sub Plots Example
@@ -52,3 +51,4 @@ fig.add(i: 1, j: 0, title: 'SubPlot10', xlabel: 'x-axis', ylabel: 'y-axis')
 
 fig.show()
 ```
+![Screenshot_20230125_221604](https://user-images.githubusercontent.com/34854740/214625568-3e7eff09-7a06-4be0-b0d7-29f6b78951cd.png)
