@@ -4,12 +4,12 @@ import gx
 import ui
 
 const (
-	tick_size = 0.02
-	tsp_h     = ui.TextStyleParams{
+	tick_size = 0.018
+	tsp_ax_h  = ui.TextStyleParams{
 		align: .center
 		vertical_align: .top
 	}
-	tsp_v = ui.TextStyleParams{
+	tsp_ax_v = ui.TextStyleParams{
 		align: .right
 		vertical_align: .middle
 	}
@@ -41,7 +41,7 @@ fn (mut ax Axis) update_lim_ticks(lim []f32) {
 	if ax.lim.len == 0 {
 		ax.lim = lim
 	}
-	ax.n = 5
+	ax.n = 6
 	if ax.ticks.len == 0 {
 		// TODO: might better logic needed
 		match ax.atype {
@@ -59,25 +59,24 @@ fn (mut ax Axis) update_lim_ticks(lim []f32) {
 // (x, y): starting point on the canvas for drawing the ticks
 // (x+dx, y+dy): ending point on the canvas for drawing the ticks
 fn (ax Axis) draw_ticks(d ui.DrawDevice, c &ui.CanvasLayout, x f32, y f32, dx f32, dy f32) {
+	tick_len := vplotlib.tick_size * f32(vpl_min(c.height, c.width))
 	match ax.pos {
 		.horizontal {
-			tick_len := vplotlib.tick_size * f32(c.height)
 			for i, t in ax.ticks {
 				x_n := x + dx * t
 				y_n := y + dy * t
 				c.draw_device_line(d, x_n, y_n, x_n, y_n + tick_len, gx.black)
 				c.draw_device_styled_text(d, int(x_n), int(y_n + tick_len), ax.tick_labels[i],
-					vplotlib.tsp_h)
+					vplotlib.tsp_ax_h)
 			}
 		}
 		.vertical {
-			tick_len := vplotlib.tick_size * f32(c.width)
 			for i, t in ax.ticks {
 				x_n := x + dx * t
 				y_n := y + dy * t
 				c.draw_device_line(d, x_n, y_n, x_n - tick_len, y_n, gx.black)
 				c.draw_device_styled_text(d, int(x_n - tick_len), int(y_n), ax.tick_labels[i],
-					vplotlib.tsp_v)
+					vplotlib.tsp_ax_v)
 			}
 		}
 	}

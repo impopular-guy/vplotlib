@@ -29,7 +29,9 @@ fn main() {
 			vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
 		]
 	)
+	fig.add(title: 'Hello Plot', xlabel: 'x-axis', ylabel: 'y-axis')
 	fig.show()
+	// fig.save_figure('hello_plot.svg')
 
 	vpl.l_info('MAIN END')
 }

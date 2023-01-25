@@ -16,9 +16,9 @@ pub interface Plot {
 
 pub struct FigureParams {
 mut:
-	height int    = 600
-	width  int    = 600
-	title  string = 'Plot'
+	height int = 600
+	width  int = 600
+	title  string
 	// padding for graph from window border. Should be a value between 0 and 1
 	pad_x f32 = 0.1
 	pad_y f32 = 0.1
@@ -31,16 +31,27 @@ mut:
 struct SubFigure {
 mut:
 	plots []Plot
-	xaxis Axis
-	yaxis Axis
+	xaxis Axis = Axis{
+		pos: .horizontal
+	}
+	yaxis Axis = Axis{
+		pos: .vertical
+	}
 
-	title   string
+	title  string
+	xlabel string
+	ylabel string
+
 	x_lim   []f32
 	y_lim   []f32
 	x_lim_p []f32
 	y_lim_p []f32
-	pad_x   f32
-	pad_y   f32
+
+	pad_x      f32 = 0.1
+	pad_y      f32 = 0.1
+	title_pad  f32 = 0.05
+	xlabel_pad f32 = 0.05
+	ylabel_pad f32 = 0.05
 }
 
 [heap]
@@ -114,7 +125,7 @@ pub fn figure(params FigureParams) &Figure {
 	fig.window = ui.window(
 		width: params.width
 		height: params.height
-		title: params.title
+		title: 'vplotlib'
 		mode: .resizable
 		children: [
 			ui.column(
@@ -124,17 +135,7 @@ pub fn figure(params FigureParams) &Figure {
 			),
 		]
 	)
-	t_subfig := SubFigure{
-		xaxis: Axis{
-			pos: .horizontal
-		}
-		yaxis: Axis{
-			pos: .vertical
-		}
-		pad_x: params.pad_x
-		pad_y: params.pad_y
-	}
-	fig.subfigs = []SubFigure{len: fig.rows * fig.cols, init: t_subfig}
+	fig.subfigs = []SubFigure{len: fig.rows * fig.cols}
 	return fig
 }
 
@@ -142,15 +143,32 @@ pub struct AddParams {
 	i     int
 	j     int
 	plots []Plot
+
+	title  string
+	xlabel string
+	ylabel string
+}
+
+fn validate_add_params(p AddParams, rows int, cols int) {
+	if p.i < 0 || p.i >= rows {
+		panic('`i` must be between 0 and fig.rows-1')
+	}
+	if p.j < 0 || p.j >= cols {
+		panic('`j` must be between 0 and fig.cols-1')
+	}
 }
 
 pub fn (mut fig Figure) add(params AddParams) {
+	validate_add_params(params, fig.rows, fig.cols)
 	// clean/update global plotoptions here
 	idx := params.i * fig.rows + params.j
 	for plot in params.plots {
 		fig.subfigs[idx].plots << plot
 		fig.subfigs[idx].update_lims(plot.x_lim, plot.y_lim)
 	}
+	fig.subfigs[idx].title = params.title
+	fig.subfigs[idx].xlabel = params.xlabel
+	fig.subfigs[idx].ylabel = params.ylabel
 }
 
 // Order of drawing:
@@ -177,6 +195,34 @@ fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 
 	s_fig.xaxis.draw_ticks(d, c, x_c, y_c + h, w, 0)
 	s_fig.yaxis.draw_ticks(d, c, x_c, y_c + h, 0, -h)
+
+	if s_fig.title.len != 0 {
+		t_pad := s_fig.title_pad * c.height
+		c.draw_device_styled_text(d, int(x_c + w / 2), int(y_c - t_pad), s_fig.title,
+			ui.TextStyleParams{
+			size: 22
+			align: .center
+			vertical_align: .top
+		})
+	}
+	if s_fig.xlabel.len != 0 {
+		xl_pad := s_fig.xlabel_pad * c.height
+		c.draw_device_styled_text(d, int(x_c + w / 2), int(y_c + h + xl_pad), s_fig.xlabel,
+			ui.TextStyleParams{
+			size: 18
+			align: .center
+			vertical_align: .top
+		})
+	}
+	if s_fig.ylabel.len != 0 {
+		yl_pad := s_fig.ylabel_pad * c.width
+		c.draw_device_styled_text(d, int(x_c - yl_pad), int(y_c + h / 2), s_fig.ylabel,
+			ui.TextStyleParams{
+			size: 18
+			align: .right
+			vertical_align: .middle
+		})
+	}
 }
 
 fn (mut fig SubFigure) update_lims(x_lim []f32, y_lim []f32) {
@@ -232,8 +278,9 @@ pub fn (mut fig Figure) show() {
 pub fn (mut fig Figure) save_figure(filename string) {
 	f_type := filename.split('.').last()
 	match f_type {
-		'png' { fig.window.png_screenshot(filename) }
+		// png feature is very bad as of now
+		// 'png' { fig.window.png_screenshot(filename) }
 		'svg' { fig.window.svg_screenshot(filename) }
-		else { panic("Save file type can be only 'png' or 'svg'") }
+		else { panic("Save file type can be only 'png' or 'svg'. png is disabled as it is very bad as of now.") }
 	}
 }

@@ -30,7 +30,15 @@ fn main() {
 		plots: [
 			vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
 		]
+		title: 'SubPlot11'
+		xlabel: 'x-axis'
+		ylabel: 'y-axis'
 	)
+
+	fig.add(i: 0, j: 0, title: 'SubPlot00', xlabel: 'x-axis', ylabel: 'y-axis')
+	fig.add(i: 0, j: 1, title: 'SubPlot01', xlabel: 'x-axis', ylabel: 'y-axis')
+	fig.add(i: 1, j: 0, title: 'SubPlot10', xlabel: 'x-axis', ylabel: 'y-axis')
+
 	fig.show()
 
 	vpl.l_info('MAIN END')

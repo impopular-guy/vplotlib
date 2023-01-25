@@ -50,3 +50,17 @@ fn get_ticks_frac(n int) []f32 {
 	}
 	return ticks
 }
+
+fn vpl_min[T](a T, b T) T {
+	if a <= b {
+		return a
+	}
+	return b
+}
+
+fn vpl_max[T](a T, b T) T {
+	if a >= b {
+		return a
+	}
+	return b
+}
