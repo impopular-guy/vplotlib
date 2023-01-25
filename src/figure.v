@@ -4,6 +4,10 @@ module vplotlib
 import gx
 import ui
 
+const (
+	lim_frac = 0.02
+)
+
 pub interface Plot {
 	x_lim []f32
 	y_lim []f32
@@ -15,15 +19,9 @@ mut:
 	height int    = 600
 	width  int    = 600
 	title  string = 'Plot'
-	// axes limits
-	x_lim []f32
-	y_lim []f32
 	// padding for graph from window border. Should be a value between 0 and 1
-	pad_x f32 = 0.14
-	pad_y f32 = 0.14
-	// padding for axis from win border. [0,1]
-	axis_pad_x f32 = 0.1
-	axis_pad_y f32 = 0.1
+	pad_x f32 = 0.1
+	pad_y f32 = 0.1
 	// for subplot
 	rows int = 1
 	cols int = 1
@@ -34,13 +32,13 @@ struct SubFigure {
 mut:
 	plots []Plot
 
-	title      string
-	x_lim      []f32
-	y_lim      []f32
-	pad_x      f32
-	pad_y      f32
-	axis_pad_x f32
-	axis_pad_y f32
+	title   string
+	x_lim   []f32
+	y_lim   []f32
+	x_lim_p []f32
+	y_lim_p []f32
+	pad_x   f32
+	pad_y   f32
 }
 
 [heap]
@@ -49,17 +47,13 @@ mut:
 	window  &ui.Window
 	subfigs []SubFigure
 
-	height     int
-	width      int
-	title      string
-	x_lim      []f32
-	y_lim      []f32
-	pad_x      f32
-	pad_y      f32
-	axis_pad_x f32
-	axis_pad_y f32
-	rows       int
-	cols       int
+	height int
+	width  int
+	title  string
+	pad_x  f32
+	pad_y  f32
+	rows   int
+	cols   int
 }
 
 fn validate_figure_params(p FigureParams) {
@@ -68,12 +62,6 @@ fn validate_figure_params(p FigureParams) {
 	}
 	if p.pad_y < 0 || p.pad_y > 1 {
 		panic('`pad_y` should be a f32 between 0 and 1')
-	}
-	if p.axis_pad_x < 0 || p.axis_pad_x > 1 {
-		panic('`axis_pad_x` should be a f32 between 0 and 1')
-	}
-	if p.axis_pad_y < 0 || p.axis_pad_y > 1 {
-		panic('`axis_pad_y` should be a f32 between 0 and 1')
 	}
 	if p.rows < 1 || p.rows > 10 {
 		panic('`rows` should be an int between 1 and 10 inclusive')
@@ -90,12 +78,8 @@ pub fn figure(params FigureParams) &Figure {
 		height: params.height
 		width: params.width
 		title: params.title
-		x_lim: params.x_lim
-		y_lim: params.y_lim
 		pad_x: params.pad_x
 		pad_y: params.pad_y
-		axis_pad_x: params.axis_pad_x
-		axis_pad_y: params.axis_pad_y
 		rows: params.rows
 		cols: params.cols
 	}
@@ -141,8 +125,6 @@ pub fn figure(params FigureParams) &Figure {
 	t_subfig := SubFigure{
 		pad_x: params.pad_x
 		pad_y: params.pad_y
-		axis_pad_x: params.axis_pad_x
-		axis_pad_y: params.axis_pad_y
 	}
 	fig.subfigs = []SubFigure{len: fig.rows * fig.cols, init: t_subfig}
 	return fig
@@ -183,10 +165,10 @@ fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 		plot.draw(d, c, s_fig)
 	}
 
-	x_c := c.width * fig.axis_pad_x
-	y_c := c.height * fig.axis_pad_y
-	w := c.width * (1 - 2 * fig.axis_pad_x)
-	h := c.height * (1 - 2 * fig.axis_pad_y)
+	x_c := c.width * fig.pad_x
+	y_c := c.height * fig.pad_y
+	w := c.width * (1 - 2 * fig.pad_x)
+	h := c.height * (1 - 2 * fig.pad_y)
 	c.draw_device_rect_empty(d, x_c, y_c, w, h, gx.black)
 }
 
@@ -194,7 +176,7 @@ fn (mut fig SubFigure) update_lims(x_lim []f32, y_lim []f32) {
 	if fig.x_lim.len == 0 {
 		fig.x_lim = x_lim
 		fig.y_lim = y_lim
-		return
+		// return
 	}
 	if x_lim[0] < fig.x_lim[0] {
 		fig.x_lim[0] = x_lim[0]
@@ -208,11 +190,21 @@ fn (mut fig SubFigure) update_lims(x_lim []f32, y_lim []f32) {
 	if y_lim[1] > fig.y_lim[1] {
 		fig.y_lim[1] = y_lim[1]
 	}
+	// TODO: temp fix for now
+	fig.x_lim_p = fig.x_lim
+	dx := fig.x_lim[1] - fig.x_lim[0]
+	fig.x_lim_p[0] = fig.x_lim[0] - dx * vplotlib.lim_frac
+	fig.x_lim_p[1] = fig.x_lim[1] + dx * vplotlib.lim_frac
+
+	fig.y_lim_p = fig.y_lim
+	dy := fig.y_lim[1] - fig.y_lim[0]
+	fig.y_lim_p[0] = fig.y_lim[0] - dy * vplotlib.lim_frac
+	fig.y_lim_p[1] = fig.y_lim[1] + dy * vplotlib.lim_frac
 }
 
 fn (fig SubFigure) norm_xy(x f32, y f32, w f32, h f32) (f32, f32) {
-	mut n_x := (x - fig.x_lim[0]) / (fig.x_lim[1] - fig.x_lim[0])
-	mut n_y := (y - fig.y_lim[0]) / (fig.y_lim[1] - fig.y_lim[0])
+	mut n_x := (x - fig.x_lim_p[0]) / (fig.x_lim_p[1] - fig.x_lim_p[0])
+	mut n_y := (y - fig.y_lim_p[0]) / (fig.y_lim_p[1] - fig.y_lim_p[0])
 	n_x = fig.pad_x * w + (w - 2 * fig.pad_x * w) * n_x
 	n_y = h - fig.pad_y * h + (2 * fig.pad_y * h - h) * n_y
 	return n_x, n_y
