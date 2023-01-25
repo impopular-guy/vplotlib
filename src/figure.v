@@ -31,6 +31,8 @@ mut:
 struct SubFigure {
 mut:
 	plots []Plot
+	xaxis Axis
+	yaxis Axis
 
 	title   string
 	x_lim   []f32
@@ -123,6 +125,12 @@ pub fn figure(params FigureParams) &Figure {
 		]
 	)
 	t_subfig := SubFigure{
+		xaxis: Axis{
+			pos: .horizontal
+		}
+		yaxis: Axis{
+			pos: .vertical
+		}
 		pad_x: params.pad_x
 		pad_y: params.pad_y
 	}
@@ -143,10 +151,6 @@ pub fn (mut fig Figure) add(params AddParams) {
 		fig.subfigs[idx].plots << plot
 		fig.subfigs[idx].update_lims(plot.x_lim, plot.y_lim)
 	}
-}
-
-pub fn (fig &Figure) show() {
-	ui.run(fig.window)
 }
 
 // Order of drawing:
@@ -170,6 +174,9 @@ fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
 	w := c.width * (1 - 2 * fig.pad_x)
 	h := c.height * (1 - 2 * fig.pad_y)
 	c.draw_device_rect_empty(d, x_c, y_c, w, h, gx.black)
+
+	s_fig.xaxis.draw_ticks(d, c, x_c, y_c + h, w, 0)
+	s_fig.yaxis.draw_ticks(d, c, x_c, y_c + h, 0, -h)
 }
 
 fn (mut fig SubFigure) update_lims(x_lim []f32, y_lim []f32) {
@@ -208,6 +215,18 @@ fn (fig SubFigure) norm_xy(x f32, y f32, w f32, h f32) (f32, f32) {
 	n_x = fig.pad_x * w + (w - 2 * fig.pad_x * w) * n_x
 	n_y = h - fig.pad_y * h + (2 * fig.pad_y * h - h) * n_y
 	return n_x, n_y
+}
+
+fn (mut fig Figure) update_axes() {
+	for mut s_fig in fig.subfigs {
+		s_fig.xaxis.update_lim_ticks(s_fig.x_lim_p)
+		s_fig.yaxis.update_lim_ticks(s_fig.y_lim_p)
+	}
+}
+
+pub fn (mut fig Figure) show() {
+	fig.update_axes()
+	ui.run(fig.window)
 }
 
 pub fn (mut fig Figure) save_figure(filename string) {

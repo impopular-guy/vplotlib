@@ -40,3 +40,13 @@ fn get_fraction(n int) []f64 {
 	frac[0] += math.round_sig(1.0 - sum, 3)
 	return frac
 }
+
+fn get_ticks_frac(n int) []f32 {
+	frac := get_fraction(n + 1)
+	mut ticks := []f32{}
+	ticks << f32(frac[0])
+	for i := 1; i < n; i++ {
+		ticks << f32(ticks.last() + frac[i])
+	}
+	return ticks
+}
