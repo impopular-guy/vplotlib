@@ -16,8 +16,8 @@ pub interface Plot {
 
 pub struct FigureParams {
 mut:
-	height int = 600
-	width  int = 600
+	height int = 800
+	width  int = 800
 	title  string
 	// padding for graph from window border. Should be a value between 0 and 1
 	pad_x f32 = 0.1
@@ -47,8 +47,8 @@ mut:
 	x_lim_p []f32
 	y_lim_p []f32
 
-	pad_x      f32 = 0.1
-	pad_y      f32 = 0.1
+	pad_x      f32
+	pad_y      f32
 	title_pad  f32 = 0.05
 	xlabel_pad f32 = 0.05
 	ylabel_pad f32 = 0.05
@@ -147,6 +147,8 @@ pub struct AddParams {
 	title  string
 	xlabel string
 	ylabel string
+	pad_x  f32
+	pad_y  f32
 }
 
 fn validate_add_params(p AddParams, rows int, cols int) {
@@ -155,6 +157,12 @@ fn validate_add_params(p AddParams, rows int, cols int) {
 	}
 	if p.j < 0 || p.j >= cols {
 		panic('`j` must be between 0 and fig.cols-1')
+	}
+	if p.pad_x < 0 || p.pad_x > 1 {
+		panic('`pad_x` should be a f32 between 0 and 1')
+	}
+	if p.pad_y < 0 || p.pad_y > 1 {
+		panic('`pad_y` should be a f32 between 0 and 1')
 	}
 }
 
@@ -169,6 +177,15 @@ pub fn (mut fig Figure) add(params AddParams) {
 	fig.subfigs[idx].title = params.title
 	fig.subfigs[idx].xlabel = params.xlabel
 	fig.subfigs[idx].ylabel = params.ylabel
+
+	fig.subfigs[idx].pad_x = match true {
+		params.pad_x > 0 { params.pad_x }
+		else { fig.pad_x }
+	}
+	fig.subfigs[idx].pad_y = match true {
+		params.pad_y > 0 { params.pad_y }
+		else { fig.pad_y }
+	}
 }
 
 // Order of drawing:
