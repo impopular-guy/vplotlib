@@ -13,8 +13,8 @@ fn main() {
 	for i in 0 .. 10 {
 		x << i
 		x1 << i + 5
-		y << rand.int()
-		y1 << rand.int()
+		y << rand.intn(20) or { 0 }
+		y1 << rand.intn(20) or { 0 }
 		s << rand.f32() * 18 + 6
 	}
 
