@@ -2,7 +2,6 @@ module vplotlib
 
 import gg
 import gx
-import ui
 
 pub type LineType = gg.PenLineType
 
@@ -52,20 +51,21 @@ pub fn line[T](params LineParams[T]) LinePlot {
 		x_lim: find_axis_lims(x)
 		y_lim: find_axis_lims(y)
 	}
-	l_info('ADDED PLOT: ${typeof(plot).name}')
+	debug_info('ADDED PLOT: ${typeof(plot).name}')
 	return plot
 }
 
-fn (plot &LinePlot) draw(d ui.DrawDevice, c &ui.CanvasLayout, fig &SubFigure) {
-	// cnf := gg.PenConfig{
-	// 	color: plot.color
-	// 	line_type: plot.line_type
-	// 	thickness: plot.thickness
-	// }
-	mut x, mut y := fig.norm_xy(plot.x[0], plot.y[0], c.width, c.height)
+fn (plot &LinePlot) draw(ctx &gg.Context, sfig &SubFigure) {
+	cnf := gg.PenConfig{
+		color: plot.color
+		line_type: plot.line_type
+		thickness: plot.thickness
+	}
+	mut x, mut y := sfig.norm_xy(plot.x[0], plot.y[0], sfig.width, sfig.height)
 	for i := 1; i < plot.x.len; i += 1 {
-		x2, y2 := fig.norm_xy(plot.x[i], plot.y[i], c.width, c.height)
-		c.draw_device_line(d, x, y, x2, y2, plot.color)
+		x2, y2 := sfig.norm_xy(plot.x[i], plot.y[i], sfig.width, sfig.height)
+		ctx.draw_line_with_config(sfig.offset_x + x, sfig.offset_y + y, sfig.offset_x + x2,
+			sfig.offset_y + y2, cnf)
 		x, y = x2, y2
 	}
 }

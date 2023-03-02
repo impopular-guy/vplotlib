@@ -3,8 +3,10 @@ module vplotlib
 import time
 import math
 
-pub fn l_info(s string) {
-	println('INFO ${time.now()} : ${s}')
+pub fn debug_info(s string) {
+	$if debug {
+		println('${time.now()} : ${s}')
+	}
 }
 
 fn to_f32_array[T](x []T) []f32 {

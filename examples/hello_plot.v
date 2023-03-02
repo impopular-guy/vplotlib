@@ -18,20 +18,15 @@ fn main() {
 		s << rand.f32() * 18 + 6
 	}
 
-	vpl.l_info('MAIN START')
-
-	mut fig := vpl.figure(title: 'Multiple Plots')
-	fig.add(
-		plots: [
-			vpl.line(x: x1, y: y1),
-			vpl.line(x: x, y: y, color: gx.green, line_type: .dashed),
-			vpl.scatter(x: x, y: y, s: s, color: gx.red),
-			vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
-		]
-	)
-	fig.add(title: 'Hello Plot', xlabel: 'x-axis', ylabel: 'y-axis')
+	mut fig := vpl.new_figure(rows: 1)!
+	fig.plot([
+		vpl.line(x: x1, y: y1),
+		vpl.line(x: x, y: y, color: gx.green, line_type: .dashed),
+		vpl.scatter(x: x, y: y, s: s, color: gx.red),
+		vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
+	])!
+	fig.title('Hello Plot')
+	fig.xlabel('x-axis')
+	fig.ylabel('y-axis')
 	fig.show()
-	// fig.save_figure('hello_plot.svg')
-
-	vpl.l_info('MAIN END')
 }
