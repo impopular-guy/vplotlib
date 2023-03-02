@@ -195,7 +195,7 @@ pub fn (mut fig Figure) add(params AddParams) {
 // - axis ticks
 // - labels and titles if any
 // - legend if any
-fn (fig &Figure) draw(d ui.DrawDevice, c &ui.CanvasLayout) {
+fn (fig &Figure) draw(mut d ui.DrawDevice, c &ui.CanvasLayout) {
 	// ctx.draw_text_def(int(x_c + w / 2), int(y_c/2), fig.title)
 	s_id := c.id.split('_')
 	idx := s_id[1].int() * fig.rows + s_id[2].int()
