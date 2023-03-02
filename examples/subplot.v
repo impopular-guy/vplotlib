@@ -10,7 +10,7 @@ fn main() {
 	mut y := []int{}
 	mut y1 := []int{}
 	mut s := []f32{}
-	for i in 0 .. 10 {
+	for i in 0 .. 50 {
 		x << i
 		x1 << i + 5
 		y << rand.intn(20) or { 0 }
