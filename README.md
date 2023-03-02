@@ -11,20 +11,20 @@ import gx
 fn main() {
 	x, x1, y, y1, s := ... // inputs
 
-	mut fig := vpl.figure(title: 'Multiple Plots')
-	fig.add(
-		plots: [
-			vpl.line( x: x1, y: y1 ),
-			vpl.line( x: x, y: y, color: gx.green, line_type: .dashed ),
-			vpl.scatter( x: x, y: y, s: s, color: gx.red ),
-			vpl.scatter( x: x1, y: y1, s: s, color: gx.cyan, marker: .square ),
-		]
-	)
-	fig.add(title: 'Hello Plot', xlabel: 'x-axis', ylabel: 'y-axis')
+	mut fig := vpl.new_figure(rows: 1)!
+	fig.plot([
+		vpl.line(x: x1, y: y1),
+		vpl.line(x: x, y: y, color: gx.green, line_type: .dashed),
+		vpl.scatter(x: x, y: y, s: s, color: gx.red),
+		vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
+	])!
+	fig.title('Hello Plot')
+	fig.xlabel('x-axis')
+	fig.ylabel('y-axis')
 	fig.show()
 }
 ```
-![Screenshot_20230125_221141](https://user-images.githubusercontent.com/34854740/214625478-062428c0-b06d-42f4-b897-2f9af8a57dc9.png)
+![Screenshot](docs/assets/hello_plot.png)
 
 
 #### Sub Plots Example
