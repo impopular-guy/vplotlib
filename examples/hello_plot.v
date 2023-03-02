@@ -25,8 +25,8 @@ fn main() {
 		vpl.scatter(x: x, y: y, s: s, color: gx.red),
 		vpl.scatter(x: x1, y: y1, s: s, color: gx.cyan, marker: .square),
 	])!
-	fig.title('Hello Plot')
-	fig.xlabel('x-axis')
-	fig.ylabel('y-axis')
+	fig.set_title('Hello Plot')
+	fig.set_xlabel('x-axis')
+	fig.set_ylabel('y-axis')
 	fig.show()
 }

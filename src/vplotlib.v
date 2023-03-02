@@ -47,16 +47,17 @@ pub fn new_figure(params FigureParams) !&Figure {
 		}
 	} else {
 		fig.is_subplot = true
-		// TODO processed widths, heights for each subfigure
+		w := int(fig.width / fig.cols)
+		h := int(fig.height / fig.rows)
 		for i := 0; i < params.rows; i++ {
 			for j := 0; j < params.cols; j++ {
 				subfigs << SubFigure{
 					pos_i: i
 					pos_j: j
-					// offset_x: TODO
-					// offset_y: TODO
-					width: params.width
-					height: params.height
+					offset_x: f32(w * j)
+					offset_y: f32(h * i)
+					width: w
+					height: h
 				}
 			}
 		}
@@ -112,15 +113,15 @@ pub fn (mut fig Figure) subplot(i int, j int, plots []Plot) ! {
 	}
 }
 
-pub fn (mut fig Figure) xlabel(label string) {
+pub fn (mut fig Figure) set_xlabel(label string) {
 	fig.subfigs[0].xlabel = label
 }
 
-pub fn (mut fig Figure) ylabel(label string) {
+pub fn (mut fig Figure) set_ylabel(label string) {
 	fig.subfigs[0].ylabel = label
 }
 
-pub fn (mut fig Figure) title(title string) {
+pub fn (mut fig Figure) set_title(title string) {
 	fig.subfigs[0].title = title
 }
 
@@ -131,11 +132,20 @@ pub fn (mut fig Figure) legend(labels []string) {
 	// this is for only single plot
 }
 
-struct Attribute {}
+pub struct Attribute {
+	title  string
+	xlabel string
+	ylabel string
+}
 
 // TODO set attribute methods for subplots will be merged into one func
 // legend labels are also passed
-pub fn (mut fig Figure) set_attributes(i int, j int, param Attribute) {
+pub fn (mut fig Figure) set_attributes(i int, j int, param Attribute) ! {
+	validate_rowcols(i, j, fig.rows, fig.cols)!
+	idx := i * fig.rows + j
+	fig.subfigs[idx].title = param.title
+	fig.subfigs[idx].xlabel = param.xlabel
+	fig.subfigs[idx].ylabel = param.ylabel
 }
 
 fn (mut fig Figure) update_axes() {
@@ -167,9 +177,18 @@ fn on_resize(e &gg.Event, mut fig Figure) {
 		fig.subfigs[0].height = fig.height
 		fig.subfigs[0].width = fig.width
 	} else {
-		// TODO
+		w := int(fig.width / fig.cols)
+		h := int(fig.height / fig.rows)
+		for i := 0; i < fig.rows; i++ {
+			for j := 0; j < fig.cols; j++ {
+				idx := i * fig.rows + j
+				fig.subfigs[idx].offset_x = f32(w * j)
+				fig.subfigs[idx].offset_y = f32(h * i)
+				fig.subfigs[idx].width = w
+				fig.subfigs[idx].height = h
+			}
+		}
 	}
-	// TODO recalculate offsets for each subfigure
 }
 
 // TODO
