@@ -160,8 +160,15 @@ fn draw(fig &Figure) {
 }
 
 fn on_resize(e &gg.Event, mut fig Figure) {
+	debug_info('RESIZE ${e.window_width} ${e.window_height}')
 	fig.width = e.window_width
 	fig.height = e.window_height
+	if fig.rows == 1 && fig.cols == 1 {
+		fig.subfigs[0].height = fig.height
+		fig.subfigs[0].width = fig.width
+	} else {
+		// TODO
+	}
 	// TODO recalculate offsets for each subfigure
 }
 
