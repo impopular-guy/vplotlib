@@ -194,3 +194,7 @@ fn on_resize(e &gg.Event, mut fig Figure) {
 // TODO
 pub fn (fig &Figure) save(filename string) {
 }
+
+// TODO
+pub fn (mut fig Figure) clear() {
+}

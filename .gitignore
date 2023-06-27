@@ -6,6 +6,7 @@ vplotlib
 *.so
 *.dylib
 *.dll
+*.c
 
 # Ignore binary output folders
 bin/

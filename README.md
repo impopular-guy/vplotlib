@@ -65,9 +65,9 @@ Suppose anybody wants to add a new type of plot i.e. `violin` plot, then do the 
 
 ### Plots TODO
 
-|        |             |            |
-|--------|-------------|------------|
-| line ✅ | scatter ✅   | histogram  |
-| bar    | starckedbar | groupedbar |
-| box    | stem        | heatmap    |
-| pie    | polar       | logaxis    |
+|         |             |            |
+|---------|-------------|------------|
+| line ✅ | scatter ✅ | histogram  |
+| bar     | stackedbar  | groupedbar |
+| box     | stem        | heatmap    |
+| pie     | polar       | logaxis    |
